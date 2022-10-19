@@ -97,7 +97,7 @@
           total +=4
         }
 
-        if(this.form.anotherTreat){
+        if(this.form.otherTreat){
           total +=2
         }
         return total;
