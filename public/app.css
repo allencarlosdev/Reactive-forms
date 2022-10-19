@@ -8,6 +8,8 @@
     --title-plans-color: #443030;
     --description-plans-color: #644c4c;
     --background-plans: #f0ead6;
+    --disable-color: #adaaaa;
+    --select-color: #ff3131;
 }
 
 html {
@@ -241,6 +243,7 @@ button {
 }
 .leading-normal {
   line-height: 1.5;
+  color: var(--description-plans-color);
 }
 .mx-auto {
   margin-left: auto;
@@ -359,7 +362,7 @@ span#logo {
 .btn:disabled {
   background-color: var(--description-plans-color);
   border-color: var(--description-plans-color);
-  color: var(--description-plans-color);
+  color: var(--disable-color);
 }
 .btn-outlined {
   display: inline-block;
@@ -422,7 +425,6 @@ span#logo {
   color: var(--title-plans-color);
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
-  height: 100px;
 }
 .plans .plan > .description {
   width: 60%;
@@ -468,7 +470,7 @@ span#logo {
 .plans .active-plan:after,
 .plans .plan:hover:after {
   border-width: 2px;
-  border-color: var(--title-plans-color);
+  border-color: var(--select-color);
   border-radius: 0.25rem;
   content: "";
   position: absolute;

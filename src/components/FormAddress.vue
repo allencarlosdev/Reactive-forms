@@ -47,7 +47,7 @@
       submit(){
         if (!this.$v.$invalid) {
           this.$emit('update', {
-            recipent: this.form.recipient,
+            recipient: this.form.recipient,
             address: this.form.address
           })
         }
