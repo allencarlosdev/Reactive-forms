@@ -1,33 +1,52 @@
 <template>
   <div>
-    <keep-alive>
-      <component :is="currentStep" @update="processStep" :wizard-data="form"></component>
-    </keep-alive>
-
-    <div class="progress-bar">
-      <div :style="`width: ${progress}%;`"></div>
+    <div v-if="wizardInProgress">
+      <keep-alive>
+        <component 
+          ref="currentStep"
+          :is="currentStep" 
+          @update="processStep" 
+          :wizard-data="form"
+        ></component>
+      </keep-alive>
+  
+      <div class="progress-bar">
+        <div :style="`width: ${progress}%;`"></div>
+      </div>
+  
+      <!-- Actions -->
+      <div class="buttons">
+        <button
+          @click="goBack"
+          v-if="currentStepNumber > 1"
+          class="btn-outlined"
+        >Back
+        </button>
+        <button
+          @click="nextButtonAction"
+          :disabled="!canGoNext"
+          class="btn"
+        >{{ isLastStep ? 'Complete Order' : 'Next' }}</button>
+      </div>
+  
+      <pre><code>{{form}}</code></pre>
     </div>
 
-    <!-- Actions -->
-    <div class="buttons">
-      <button
-        @click="goBack"
-        v-if="currentStepNumber > 1"
-        class="btn-outlined"
-      >Back
-      </button>
-      <button
-        @click="goNext"
-        :disabled="!canGoNext"
-        class="btn"
-      >Next</button>
-    </div>
+    <div v-else>
+        <h1 class="title">Thank you!</h1>
+        <h2 class="subtitle">
+          We look forward to shipping you your first box!
+        </h2>
 
-    <pre><code>{{form}}</code></pre>
+        <p class="text-center">
+          <a href="https://allencarlosdev.com" target="_blank" class="btn"> Go somewhere cool!</a>
+        </p>
+    </div>
   </div>
 </template>
 
 <script>
+import {postFormToDB} from '../api'
 import FormPlanPicker from './FormPlanPicker'
 import FormUserDetails from './FormUserDetails'
 import FormAddress from './FormAddress'
@@ -63,6 +82,12 @@ export default {
     }
   },
   computed: {
+    isLastStep(){
+      return this.currentStepNumber === this.length
+    },
+    wizardInProgress(){
+      return this.currentStepNumber <= this.length
+    },
     length(){
       return this.steps.length
     },
@@ -74,6 +99,18 @@ export default {
     }
   },
   methods: {
+    submitOrder(){
+      postFormToDB(this.form)
+        console.log('form submitted', this.form)
+        this.currentStepNumber++
+    },
+    nextButtonAction(){
+      if(this.isLastStep){
+        this.submitOrder()
+      }else{
+        this.goNext()
+      }
+    },
     processStep(step){
       Object.assign(this.form, step.data)
       this.canGoNext = step.valid
@@ -84,7 +121,9 @@ export default {
     },
     goNext () {
       this.currentStepNumber++
-      this.canGoNext = false 
+      this.$nextTick(() => {
+        this.canGoNext = !this.$refs.currentStep.$v.$invalid
+      })
     }
   }
 }
