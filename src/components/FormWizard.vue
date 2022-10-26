@@ -1,9 +1,8 @@
 <template>
   <div>
-    <FormPlanPicker v-if="currentStepNumber === 1" @update="processStep"/>
-    <FormUserDetails v-if="currentStepNumber === 2" @update="processStep"/>
-    <FormAddress v-if="currentStepNumber === 3" @update="processStep" :wizard-data="form"/>
-    <FormReviewOrder v-if="currentStepNumber === 4" @update="processStep" :wizard-data="form"/>
+    <keep-alive>
+      <component :is="currentStep" @update="processStep" :wizard-data="form"></component>
+    </keep-alive>
 
     <div class="progress-bar">
       <div :style="`width: ${progress}%;`"></div>
@@ -45,7 +44,12 @@ export default {
     return {
       currentStepNumber: 1,
       canGoNext: false,
-      length: 4,
+      steps:[
+        'FormPlanPicker',
+        'FormUserDetails',
+        'FormAddress',
+        'FormReviewOrder'
+      ],
       form: {
         plan: null,
         email: null,
@@ -59,17 +63,24 @@ export default {
     }
   },
   computed: {
+    length(){
+      return this.steps.length
+    },
+    currentStep(){
+      return this.steps[this.currentStepNumber - 1]
+    },
     progress () {
       return this.currentStepNumber/this.length * 100
     }
   },
   methods: {
-    processStep(stepData){
-      Object.assign(this.form, stepData)
-      this.canGoNext = true
+    processStep(step){
+      Object.assign(this.form, step.data)
+      this.canGoNext = step.valid
     },
     goBack () {
       this.currentStepNumber--
+      this.canGoNext = true
     },
     goNext () {
       this.currentStepNumber++
