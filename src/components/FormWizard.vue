@@ -29,7 +29,7 @@
         >{{ isLastStep ? 'Complete Order' : 'Next' }}</button>
       </div>
   
-      <pre><code>{{form}}</code></pre>
+      <!-- <pre><code>{{form}}</code></pre> -->
     </div>
 
     <div v-else>
